@@ -22,9 +22,7 @@ conan_cmake_install(PATH_OR_REFERENCE ../../../packages/core
 # Find sources and dependencies                           #
 ###########################################################
 file(GLOB_RECURSE H_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp")
-file(GLOB_RECURSE CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-
-add_dependencies(${PROJECT_NAME} graphics)
+file(GLOB_RECURSE CPP_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 find_package(glfw3 REQUIRED)
 
@@ -46,6 +44,8 @@ list(REMOVE_DUPLICATES INCLUDE_DIRS)
 # Create library                                          #
 ###########################################################
 add_library(${PROJECT_NAME} STATIC ${H_FILES} ${CPP_FILES})
+
+add_dependencies(${PROJECT_NAME} graphics)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE graphics)
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})

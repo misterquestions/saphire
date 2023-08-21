@@ -31,5 +31,5 @@ find_package(glfw3 3.3 REQUIRED)
 ###########################################################
 add_library(${PROJECT_NAME} STATIC ${H_FILES} ${CPP_FILES})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
+target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${glfw3_INCLUDE_DIRS})

@@ -1,3 +1,63 @@
 #!/usr/bin/env python3
 
-print('Hello World!')
+import argparse
+import subprocess
+import shutil
+import os
+
+def build_project(args):
+    build_dir = 'build'
+    
+    if args.clean:
+        shutil.rmtree(build_dir, ignore_errors=True)
+
+    os.makedirs(build_dir, exist_ok=True)
+    
+    configure_command = ['cmake', '..']
+
+    if args.release:
+        configure_command += ['-DCMAKE_BUILD_TYPE=Release']
+    else:
+        configure_command += ['-DCMAKE_BUILD_TYPE=Debug']
+
+    build_command = ['cmake', '--build', '.']
+    
+    os.chdir(build_dir)
+    subprocess.run(configure_command)
+    subprocess.run(build_command)
+    os.chdir('..')
+
+def run_project():
+    run_command = ['./build/your_executable']
+    subprocess.run(run_command)
+
+def is_project_root():
+    # You can modify this list to include specific files or directories that must be present in the project root.
+    required_files = ['.gitignore', 'CMakeLists.txt', 'README.md']
+    return all(os.path.exists(path) for path in required_files)
+
+def main():
+    if not is_project_root():
+        print("Please run this script from the project root directory.")
+        return
+
+    parser = argparse.ArgumentParser(description='CLI tool for building and running C++ project')
+    subparsers = parser.add_subparsers(dest='command')
+
+    build_parser = subparsers.add_parser('build', help='Build the project')
+    build_parser.add_argument('--release', action='store_true', help='Build with release (production) configuration')
+    build_parser.add_argument('--clean', action='store_true', help='Clean the build directory before building')
+    build_parser.set_defaults(func=build_project)
+
+    run_parser = subparsers.add_parser('run', help='Run the project')
+    run_parser.set_defaults(func=run_project)
+
+    args = parser.parse_args()
+
+    if args.command is None:
+        parser.print_help()
+    else:
+        args.func(args)
+
+if __name__ == '__main__':
+    main()
